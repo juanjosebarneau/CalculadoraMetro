@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Calculadora Metro V5 Mobile</title>
+        <style>
+        body{font-family:Arial;
+            margin:0;
+            background:#f4f4f4;
+            padding:10px}
+        .container{
+            max-width:700px;
+            margin:auto}
+        h1{text-align:center;color:#004a99}
+        .card{background:#fff;border-radius:12px;padding:12px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+        .card h3{margin:0 0 8px;font-size:16px}
+        .card input,.modo{width:100%;height:44px;font-size:18px}
+        .resumen{position:sticky;bottom:0;background:#fff;padding:15px;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,.15)}
+        .total{font-size:28px;color:green;font-weight:bold;text-align:center}
+        .btn{width:100%;height:44px;margin-top:8px;border:none;border-radius:8px}
+        .rojo{background:#dc3545;color:#fff}
+        .verde{background:#25D366;color:#fff}
+        </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>Calculadora Metro V5</h1>
+                    <select id="modo" class="modo" onchange="calcular()">
+                        <option value="cortador">Cortador</option><option value="multiple">Tareas Múltiples</option>
+                    </select>
+                    <p id="estado">Cargando...</p>
+                    <div id="cards"></div>
+                    <div class="resumen">
+                        <div>Producción: 
+                            <span id="prod">$0</span>
+                        </div>
+                        <div>Premio Simple: 
+                            <span id="ps">$0</span>
+                        </div>
+                        <div>Premio Doble: 
+                            <span id="pd">$0</span>
+                        </div><div>Piso: 
+                            <span id="piso">$0</span>
+                        </div>
+                        <div>Premio Múltiples: 
+                            <span id="pm">$0</span>
+                        </div><hr>
+                        <div class="total" id="total">$0</div>
+                        <button class="btn rojo" onclick="limpiar()">Limpiar</button>
+                        <button class="btn verde" onclick="wa()">Compartir WhatsApp</button>
+                    </div>
+                </div>
+                <script>
+                    //const URL='https://defaultc13e001033f84ffdb4d984923dcce4.da.environment.api.powerplatform.com/powerautomate/automations/direct/cu/14/workflows/9be0d9e0569c40f09d8f54828b758a9b/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eg6nMRYv0YxsuJB94U-z4h67MkSCsgdTxxeKPxhwlgU';
+                    const URL='./valores.json';
+                    let tareas=[];
+                    const money=v=>v.toLocaleString('es-AR',{style:'currency',currency:'ARS'});
+                    async function cargar(){
+                        try{
+                            const r=await fetch(URL);
+                            tareas=await r.json();
+                            document.getElementById('estado').innerText='Valores cargados';
+                            const c=document.getElementById('cards');
+                            c.innerHTML='';
+                            tareas.forEach((t,i)=>c.innerHTML+=`<div class=card><h3>${t.Tarea}</h3><div>Valor: ${money(Number(t.Valor))}</div><input type=number value=0 min=0 id=c${i} oninput=calcular()><div id=s${i}>$0</div></div>`);
+                            calcular();
+                            }
+                        catch(e){
+                            document.getElementById('estado').innerText='Error cargando datos';
+                            }
+                    }
+                    function calcular(){
+                        let tt=0,prod=0,
+                        cortes=0,sust=0,
+                        maxOtra=0;
+                        tareas.forEach((t,i)=>{let c=+document.getElementById('c'+i).value||0;let sub=c*Number(t.Valor);document.getElementById('s'+i).innerText='Total: '+money(sub);tt+=c;prod+=sub;if(t.Tarea==='CORTE POR IMPAGO RESIDENCIAL')cortes=c;if(t.Tarea==='SUSTITUCION DE MEDIDOR')sust=c;});
+                        tareas.forEach((t,i)=>{if(t.Tarea!=='SUSTITUCION DE MEDIDOR'&&t.Tarea!=='ADICIONAL REJA'){
+                            let c=+document.getElementById('c'+i).value||0;maxOtra=Math.max(maxOtra,c)
+                            }});
+                            let ps=0,pd=0,piso=0,pm=0,total=0;
+                            if(document.getElementById('modo').value==='cortador'){
+                                let vps=tt?prod/tt:0;ps=tt>23?(tt-23)*vps:0;
+                                let cr=tareas.find(x=>x.Tarea==='CORTE POR IMPAGO RESIDENCIAL');
+                                pd=cortes>30?(cortes-30)*(Number(cr.ValorPremio)-Number(cr.Valor)):0;
+                                total=ps+pd;
+                            }
+                            else{
+                                let sv=Number((tareas.find(x=>x.Tarea==='SUSTITUCION DE MEDIDOR')||{}).Valor||0);let rv=Number((tareas.find(x=>x.Tarea==='REAPERTURA RESIDENCIAL')||{}).Valor||0);
+                                piso=sust>maxOtra?12*sv:12*rv;pm=Math.max(0,prod-piso);
+                                total=pm;}document.getElementById('prod').innerText=money(prod);document.getElementById('ps').innerText=money(ps);document.getElementById('pd').innerText=money(pd);document.getElementById('piso').innerText=money(piso);document.getElementById('pm').innerText=money(pm);document.getElementById('total').innerText=money(total);}function limpiar(){document.querySelectorAll('input[type=number]').forEach(x=>x.value=0);calcular()}function wa(){window.open('https://wa.me/?text='+encodeURIComponent('Total: '+document.getElementById('total').innerText));}window.onload=cargar;</script></body></html>
