@@ -1,47 +1,47 @@
 [
   {
     "Tarea": "AUDITORIA MOROSIDAD",
-    "Valor": 1412.23,
+    "Valor": 1439.06,
     "ValorPremio": 0
   },
   {
     "Tarea": "CORTE POR IMPAGO COMERCIAL",
-    "Valor": 7316.53,
+    "Valor": 7455.55,
     "ValorPremio": 0
   },
   {
     "Tarea": "CORTE POR IMPAGO RESIDENCIAL",
-    "Valor": 5122.45,
-    "ValorPremio": 6057.50
+    "Valor": 5219.77,
+    "ValorPremio": 6172.59
   },
   {
     "Tarea": "REAPERTURA COMERCIAL",
-    "Valor": 7633.50,
+    "Valor": 7778.5.,
     "ValorPremio": 0
   },
   {
     "Tarea": "REAPERTURA RESIDENCIAL",
-    "Valor": 6113.83,
+    "Valor": 6230.00,
     "ValorPremio": 0
   },
   {
     "Tarea": "RECOLOCACION DE MEDIDOR RESIDENCIAL",
-    "Valor": 7633.50,
+    "Valor": 7778.53,
     "ValorPremio": 0
   },
   {
     "Tarea": "RETIRO DE MEDIDOR RESIDENCIAL",
-    "Valor": 9242.95,
+    "Valor": 9418.57,
     "ValorPremio": 0
   },
   {
     "Tarea": "SUSTITUCION DE MEDIDOR",
-    "Valor": 9818.02,
+    "Valor": 10004.56,
     "ValorPremio": 0
   },
   {
     "Tarea": "ADICIONAL REJA",
-    "Valor": 1963.60,
+    "Valor": 2000.91,
     "ValorPremio": 0
   }
 ]
